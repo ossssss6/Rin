@@ -24,6 +24,12 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@v1
 
+      - name: Install dependencies
+        run: |
+          cd Rin/
+          bun i
+          bun pm untrusted || true # 查看被阻止的 postinstall 脚本
+
       - name: Deploy
         env: # Or as an environment variable
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID  }}
