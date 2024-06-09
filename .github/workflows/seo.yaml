@@ -5,7 +5,6 @@ on:
     - cron: "0 * * * *"
   workflow_dispatch:
   
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 21
+          node-version: '16' # 使用LTS版本以提高兼容性
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v1
@@ -30,8 +29,33 @@ jobs:
           sudo apt-get install -y libgbm-dev
           npx puppeteer browsers install chrome
 
+      - name: Install dependencies
+        run: |
+          cd Rin
+          bun install
+        env:
+          BUN_DEBUG: 1 # 增加调试信息
+
+      - name: List files
+        run: |
+          cd Rin
+          ls -la
+
+      - name: Print environment variables
+        run: |
+          echo "S3_ACCESS_KEY_ID=${{ secrets.S3_ACCESS_KEY_ID }}"
+          echo "S3_SECRET_ACCESS_KEY=${{ secrets.S3_SECRET_ACCESS_KEY }}"
+          echo "S3_REGION=${{ vars.S3_REGION }}"
+          echo "S3_ENDPOINT=${{ vars.S3_ENDPOINT }}"
+          echo "SEO_BASE_URL=${{ vars.SEO_BASE_URL }}"
+          echo "SEO_CONTAINS_KEY=${{ vars.SEO_CONTAINS_KEY }}"
+          echo "S3_ACCESS_HOST=${{ vars.S3_ACCESS_HOST }}"
+          echo "S3_BUCKET=${{ vars.S3_BUCKET }}"
+          echo "S3_CACHE_FOLDER=${{ vars.S3_CACHE_FOLDER }}"
+          echo "S3_FORCE_PATH_STYLE=${{ vars.S3_FORCE_PATH_STYLE }}"
+
       - name: Run script
-        env: # Or as an environment variable
+        env: 
           S3_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
           S3_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
           S3_REGION: ${{ vars.S3_REGION }}
@@ -43,6 +67,5 @@ jobs:
           S3_CACHE_FOLDER: ${{ vars.S3_CACHE_FOLDER }}
           S3_FORCE_PATH_STYLE: ${{ vars.S3_FORCE_PATH_STYLE }}
         run: |
-          cd Rin/
-          bun i
+          cd Rin
           bun scripts/render.ts
