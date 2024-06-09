@@ -1,34 +1,37 @@
 import { useEffect, useRef, useState } from 'react'
+import { getCookie } from 'typescript-cookie'
 import { DefaultParams, PathPattern, Route, RouteProps, Switch } from 'wouter'
 import Footer from './components/footer'
 import { Header } from './components/header'
 import { Padding } from './components/padding'
 import { client } from './main'
 import { CallbackPage } from './page/callback'
-import { FeedPage } from './page/feed'
+import { FeedPage, TOCHeader } from './page/feed'
 import { FeedsPage } from './page/feeds'
 import { FriendsPage } from './page/friends'
+import { TimelinePage } from './page/timeline'
 import { WritingPage } from './page/writing'
 import { Profile, ProfileContext } from './state/profile'
 import { headersWithAuth } from './utils/auth'
-import { TimelinePage } from './page/timeline'
 function App() {
   const ref = useRef(false)
   const [profile, setProfile] = useState<Profile | undefined>()
   useEffect(() => {
     if (ref.current) return
-    client.user.profile.get({
-      headers: headersWithAuth()
-    }).then(({ data }) => {
-      if (data && typeof data != 'string') {
-        setProfile({
-          id: data.id,
-          avatar: data.avatar || '',
-          permission: data.permission,
-          name: data.username
-        })
-      }
-    })
+    if (getCookie('token')?.length ?? 0 > 0) {
+      client.user.profile.get({
+        headers: headersWithAuth()
+      }).then(({ data }) => {
+        if (data && typeof data != 'string') {
+          setProfile({
+            id: data.id,
+            avatar: data.avatar || '',
+            permission: data.permission,
+            name: data.username
+          })
+        }
+      })
+    }
     ref.current = true
   }, [])
   return (
@@ -43,9 +46,19 @@ function App() {
             <TimelinePage />
           </RouteMe>
 
-          <RouteMe path="/feed/:id">
-            {params => <FeedPage id={params.id} />}
-          </RouteMe>
+          <Route path="/feed/:id" >
+            {params => {
+              return (<>
+                <Header>
+                  <TOCHeader />
+                </Header>
+                <Padding className='mx-4'>
+                  <FeedPage id={params.id} />
+                </Padding>
+                <Footer />
+              </>)
+            }}
+          </Route>
 
           <RouteMe path="/writing">
             <WritingPage />
@@ -99,5 +112,4 @@ function RouteMe<
     </Route>
   )
 }
-
 export default App
