@@ -7,17 +7,7 @@ import { client } from "../main"
 import { ProfileContext } from "../state/profile"
 import { headersWithAuth } from "../utils/auth"
 import { siteName } from "../utils/constants"
-
-function tryInt(defaultValue: number, ...args: (string | number | undefined | null)[]): number {
-    for (const v of args) {
-        if (typeof v === "number") return v
-        if (typeof v === "string") {
-            const n = parseInt(v)
-            if (!isNaN(n)) return n
-        }
-    }
-    return defaultValue
-}
+import { tryInt } from "../utils/int"
 
 type FeedsData = {
     size: number,
@@ -84,7 +74,7 @@ export function FeedsPage() {
                 <meta property="og:type" content="article" />
                 <meta property="og:url" content={document.URL} />
             </Helmet>
-            <Waiting for={feeds[listState].size > 0 || status === 'idle'}>
+            <Waiting for={feeds.draft.size + feeds.normal.size + feeds.unlisted.size > 0 || status === 'idle'}>
                 <main className="w-full flex flex-col justify-center items-center mb-8">
                     <div className="wauto text-start text-black dark:text-white py-4 text-4xl font-bold">
                         <p>
@@ -110,7 +100,7 @@ export function FeedsPage() {
                         {feeds[listState].data.map(({ id, ...feed }: any) => (
                             <FeedCard key={id} id={id} {...feed} />
                         ))}
-                        <div className="wauto flex flex-row items-center mt-4">
+                        <div className="wauto flex flex-row items-center mt-4 ani-show">
                             {page > 1 &&
                                 <Link href={`/?type=${listState}&page=${(page - 1)}`}
                                     className={`text-sm font-normal rounded-full px-4 py-2 text-white bg-theme`}>

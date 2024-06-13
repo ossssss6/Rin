@@ -107,7 +107,7 @@ export function FeedPage({ id }: { id: string }) {
                     <meta name="description" content={feed.content.length > 200 ? feed.content.substring(0, 200) : feed.content} />
                 </Helmet>
             }
-            <div className="w-full flex flex-row justify-center">
+            <div className="w-full flex flex-row justify-center ani-show">
                 {error &&
                     <>
                         <div className="flex flex-col wauto rounded-2xl bg-w m-2 p-6 items-center justify-center">
@@ -126,7 +126,7 @@ export function FeedPage({ id }: { id: string }) {
                         <main className="wauto">
                             <article className="rounded-2xl bg-w m-2 p-6" aria-label="正文">
                                 <div className="flex flex-row items-center">
-                                    <h1 className="text-xl font-bold t-primary">
+                                    <h1 className="text-2xl font-bold t-primary">
                                         {feed.title}
                                     </h1>
                                     <div className="flex-1 w-0" />
@@ -267,7 +267,7 @@ export function TOCHeader() {
 
 export function TOC({ empty }: { empty: boolean }) {
     return (
-        <div className={`rounded-2xl bg-w mt-2 py-4 px-4 fixed start-0 end-0  t-primary`} style={{ position: 'sticky', top: '150px' }}>
+        <div className={`ml-2 rounded-2xl bg-w py-4 px-4 fixed start-0 end-0 top-[5.5rem] sticky t-primary`}>
             <h1 className="text-xl font-bold">
                 目录
             </h1>
@@ -410,7 +410,7 @@ function CommentItem({ comment, onRefresh }: { comment: Comment, onRefresh: () =
                         {format(comment.createdAt)}
                     </span>
                 </div>
-                <p className="t-primary">
+                <p className="t-primary break-words">
                     {comment.content}
                 </p>
                 <div className="flex flex-row justify-end">
